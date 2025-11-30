@@ -5,6 +5,7 @@ const router = require('./router');
 const cors = require('cors');
 const errorMiddleware = require('./middlewares/error.middleware');
 const db = require('./config/db');
+require('./models/index');
 
 const PORT = process.env.PORT;
 const app = express();
