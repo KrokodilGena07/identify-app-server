@@ -1,16 +1,12 @@
 const {SimpleUser} = require('../../models');
-const ApiError = require('../../error/ApiError');
-const bcrypt = require('bcrypt');
-const UserDTO = require('./dtos/UserDTO');
+const LoginService = require('../shared/LoginService');
+const UserDTO = require('../shared/dtos/UserDTO');
 
-class LoginAuthService {
+class LoginAuthService extends LoginService {
     async registration({login, password, firstName, lastName}) {
-        const candidate = await SimpleUser.findByPk(login);
-        if (candidate) {
-            throw ApiError.badRequest('This name has already taken');
-        }
+        await super._isCandidate(login);
 
-        const hashPassword = await bcrypt.hash(password, 5);
+        const hashPassword = await super._getHashPassword(password);
         const newUser = await SimpleUser.create(
             {login, password: hashPassword, firstName, lastName}
         );
@@ -18,24 +14,10 @@ class LoginAuthService {
         return new UserDTO(newUser);
     }
 
-    async checkLogin(login) {
-        const data = await SimpleUser.findByPk(login);
-        return {isTaken: !!data};
-    }
-
-    async signIn({login, password}) {
-        const user = await SimpleUser.findByPk(login);
-        if (!user) {
-            throw ApiError.badRequest('Login is wrong');
-        }
-
-        const isPasswordEqual = await bcrypt.compare(password, user.password);
-        if (!isPasswordEqual) {
-            throw ApiError.badRequest('Password is wrong');
-        }
-
+    async signIn(data) {
+        const user =  super._authorizedUser(data);
         return new UserDTO(user);
     }
 }
 
-module.exports = new LoginAuthService();
+module.exports = new LoginAuthService(SimpleUser);

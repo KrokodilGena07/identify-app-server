@@ -1,6 +1,6 @@
 const express = require('express');
 const loginAuthController = require('./loginAuthController');
-const registrationValidator = require('./validators/registrationValidator');
+const registrationValidator = require('../shared/validators/registrationValidator');
 
 const loginAuthRouter = express.Router();
 

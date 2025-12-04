@@ -6,6 +6,8 @@ const cors = require('cors');
 const errorMiddleware = require('./middlewares/error.middleware');
 const db = require('./config/db');
 require('./models/index');
+const cookieParser = require('cookie-parser');
+const {callback} = require('pg/lib/native/query');
 
 const PORT = process.env.PORT;
 const app = express();
@@ -15,7 +17,7 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
-
+app.use(cookieParser());
 app.use('/api', router);
 app.use(errorMiddleware);
 
