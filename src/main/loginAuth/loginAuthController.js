@@ -1,8 +1,14 @@
 const loginAuthService = require('./loginAuthService');
 const {validationResult} = require('express-validator');
 const ApiError = require('../../error/ApiError');
+const LoginController = require('../shared/LoginController');
 
-class LoginAuthController {
+class LoginAuthController extends LoginController {
+    constructor(service) {
+        super(service);
+        this.checkLogin = this.checkLogin.bind(this)
+    }
+
     async registration(req, res, next) {
         try {
             const errors = validationResult(req);
@@ -12,16 +18,6 @@ class LoginAuthController {
             }
 
             const data = await loginAuthService.registration(req.body);
-            res.json(data);
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    async checkLogin(req, res, next) {
-        try {
-            const {login} = req.params;
-            const data = await loginAuthService.checkLogin(login);
             res.json(data);
         } catch (e) {
             next(e);
@@ -43,4 +39,4 @@ class LoginAuthController {
     }
 }
 
-module.exports = new LoginAuthController();
+module.exports = new LoginAuthController(loginAuthService);

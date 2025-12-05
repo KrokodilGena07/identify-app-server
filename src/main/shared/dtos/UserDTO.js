@@ -1,4 +1,8 @@
 class UserDTO {
+    login;
+    firstName;
+    lastName;
+
     constructor(model) {
         this.login = model.login;
         this.firstName = model.firstName;
